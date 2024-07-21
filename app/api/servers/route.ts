@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../../../lib/db";
 import { MemberRole } from "@prisma/client";
 
-export default async function POST(req: Request) {
+export async function POST(req: Request) {
   try {
     const { name, imageUrl } = await req.json();
     const profile = await CurrentProfile();

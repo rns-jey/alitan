@@ -35,7 +35,16 @@ export default function InitialModal() {
   const isLoading = form.formState.isSubmitting;
   const router = useRouter();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await axios.post("/api/servers/", values);
+      form.reset();
+      router.refresh();
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Dialog open>
