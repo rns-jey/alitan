@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "./db";
 
-export default async function CurrentProfile() {
+export default async function currentProfile() {
   const { userId } = auth();
 
   if (!userId) {
