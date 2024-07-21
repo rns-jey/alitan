@@ -9,8 +9,9 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./form";
 import { Button } from "../atoms/button";
 import { Input } from "../atoms/input";
-import { useState } from "react";
 import FileUpload from "../atoms/file-upload";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -32,9 +33,9 @@ export default function InitialModal() {
   });
 
   const isLoading = form.formState.isSubmitting;
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-  };
+  const router = useRouter();
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {};
 
   return (
     <Dialog open>
