@@ -8,7 +8,7 @@ export default async function SetupPage() {
 
   if (!profile) return;
 
-  const server = await db.servers.findFirst({
+  const server = await db.server.findFirst({
     where: {
       members: {
         some: {
