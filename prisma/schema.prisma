@@ -23,7 +23,7 @@ model Profile {
 
   servers Servers[]
   members Members[]
-  channel Channel[]
+  channels Channels[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -39,7 +39,7 @@ model Servers {
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   members Members[]
-  channel Channel[]
+  channels Channels[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -76,7 +76,7 @@ enum ChannelType {
   VIDEO
 }
 
-model Channel {
+model Channels {
   id String @id @default(uuid())
   name String
   type ChannelType @default(TEXT)
