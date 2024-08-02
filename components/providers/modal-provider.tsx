@@ -1,8 +1,9 @@
 "use client";
-import CreateServerModal from "../molecules/create-server-modal";
-import EditServerModal from "../molecules/edit-server";
-import InviteModal from "../molecules/invite-modal";
-import MembersModal from "../molecules/members-modal";
+import CreateServerModal from "@/components/molecules/create-server-modal";
+import CreateChannel from "@/components/molecules/createChannel";
+import EditServerModal from "@/components/molecules/edit-server";
+import InviteModal from "@/components/molecules/invite-modal";
+import MembersModal from "@/components/molecules/members-modal";
 
 export default function ModalProvider() {
   return (
@@ -11,6 +12,7 @@ export default function ModalProvider() {
       <InviteModal />
       <EditServerModal />
       <MembersModal />
+      <CreateChannel />
     </>
   );
 }
