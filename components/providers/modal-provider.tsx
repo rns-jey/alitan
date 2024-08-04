@@ -5,6 +5,7 @@ import InviteModal from "@/components/molecules/invite-modal";
 import MembersModal from "@/components/molecules/members-modal";
 import CreateChannelModal from "../molecules/create-channel-modal";
 import LeaveServerModal from "../molecules/leave-server-modal";
+import DeleteServerModal from "../molecules/delete-server-modal";
 
 export default function ModalProvider() {
   return (
@@ -15,6 +16,7 @@ export default function ModalProvider() {
       <MembersModal />
       <CreateChannelModal />
       <LeaveServerModal />
+      <DeleteServerModal />
     </>
   );
 }
