@@ -47,12 +47,14 @@ export default function CreateChannelModal() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const serverId = params?.serverId;
-      const url = `/api/channels?serverId=${serverId}`;
+      const url = qs.stringifyUrl({
+        url: "/api/channels",
+        query: {
+          serverId: params?.serverId,
+        },
+      });
 
       await axios.post(url, values);
-
-      console.log(url);
 
       form.reset();
       router.refresh();

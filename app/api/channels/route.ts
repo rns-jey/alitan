@@ -11,8 +11,6 @@ export async function POST(req: Request) {
 
     const serverId = searchParams.get("serverId");
 
-    console.log(serverId);
-
     if (!profile) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -49,9 +47,6 @@ export async function POST(req: Request) {
         },
       },
     });
-
-    console.log(server);
-    console.log("================================================");
 
     return NextResponse.json(server);
   } catch (error) {
