@@ -1,4 +1,4 @@
-import ServerSidebar from "@/components/organisms/server-sidebar";
+import ServerSidebar from "@/components/molecules/server/server-sidebar";
 import currentProfile from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";

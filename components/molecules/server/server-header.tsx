@@ -9,15 +9,15 @@ interface ServerHeaderProps {
 }
 
 import React from "react";
+import { ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
+import { useModal } from "@/hooks/use-modal-store";
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./dropdown-menu";
-import { ChevronDown, LogOut, PlusCircle, Settings, Trash, UserPlus, Users } from "lucide-react";
-import { useModal } from "@/hooks/use-modal-store";
+} from "../dropdown-menu";
 
 export default function ServerHeader({ server, role }: ServerHeaderProps) {
   const { onOpen } = useModal();

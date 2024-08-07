@@ -2,8 +2,15 @@
 
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../atoms/command";
 import { useParams, useRouter } from "next/navigation";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/atoms/command";
 
 interface ServerSearchProps {
   data: {
