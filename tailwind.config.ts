@@ -13,6 +13,9 @@ export default withUt({
       },
     },
     extend: {
+      space: {
+        "2px": "2px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
