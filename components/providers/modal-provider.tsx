@@ -7,6 +7,7 @@ import CreateChannelModal from "../molecules/create-channel-modal";
 import LeaveServerModal from "../molecules/leave-server-modal";
 import DeleteServerModal from "../molecules/delete-server-modal";
 import DeleteChannelModal from "../molecules/delete-channel-modal";
+import EditChannelModal from "../molecules/edit-channel-modal";
 
 export default function ModalProvider() {
   return (
@@ -19,6 +20,7 @@ export default function ModalProvider() {
       <LeaveServerModal />
       <DeleteServerModal />
       <DeleteChannelModal />
+      <EditChannelModal />
     </>
   );
 }
