@@ -1,5 +1,6 @@
 import ChatHeader from "@/components/molecules/chat-header";
 import ChatInput from "@/components/molecules/chat/chat-input";
+import ChatMessages from "@/components/molecules/chat/chat-messages";
 import currentProfile from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
@@ -35,7 +36,20 @@ export default async function ChannelIdPage({ params }: ChannelIdPageProps) {
   return (
     <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
       <ChatHeader name={channel.name} serverId={channel.serverId} type="channel" />
-      <div className="flex-1">Future Messages</div>
+      <ChatMessages
+        name={channel.name}
+        member={member}
+        type="channel"
+        apiUrl="/api/messages"
+        socketUrl="/api/socket/messages"
+        socketQuery={{
+          channelId: channel.id,
+          serverId: channel.serverId,
+        }}
+        paramKey="channelId"
+        paramValue={channel.id}
+        chatId={channel.id}
+      />
       <ChatInput
         name={channel.name}
         type="channel"
