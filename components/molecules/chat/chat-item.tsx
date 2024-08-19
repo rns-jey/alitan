@@ -5,6 +5,7 @@ import UserAvatar from "../user-avatar";
 import ActionTooltip from "../action-tooltip";
 import { FileIcon, ShieldAlert, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface ChatItemProps {
   id: string;
@@ -38,6 +39,9 @@ export default function ChatItem({
   socketUrl,
   socketQuery,
 }: ChatItemProps) {
+  const [isEditing, setEditing] = useState(false);
+  const [isDeleting, setDeleting] = useState(false);
+
   const fileType = fileUrl?.split(".").pop();
 
   const isAdmin = currentMember.role === MemberRole.ADMIN;
