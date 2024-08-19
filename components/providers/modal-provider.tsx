@@ -8,6 +8,7 @@ import LeaveServerModal from "../molecules/leave-server-modal";
 import DeleteServerModal from "../molecules/delete-server-modal";
 import DeleteChannelModal from "../molecules/delete-channel-modal";
 import EditChannelModal from "../molecules/edit-channel-modal";
+import MessageFileModal from "../molecules/message-file-modal";
 
 export default function ModalProvider() {
   return (
@@ -21,6 +22,7 @@ export default function ModalProvider() {
       <DeleteServerModal />
       <DeleteChannelModal />
       <EditChannelModal />
+      <MessageFileModal />
     </>
   );
 }
