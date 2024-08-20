@@ -183,13 +183,21 @@ export default function ChatItem({
                 </form>
                 <span className="text-[11px] mt-1 text-zinc-400">
                   Press escape to{" "}
-                  <a className="text-blue-500 hover:underline" onClick={() => setEditing(false)}>
+                  <button
+                    disabled={isLoading}
+                    className="text-blue-500 hover:underline"
+                    onClick={() => setEditing(false)}
+                  >
                     cancel
-                  </a>
+                  </button>
                   , enter to{" "}
-                  <a className="text-blue-500 hover:underline" onClick={form.handleSubmit(onSubmit)}>
+                  <button
+                    disabled={isLoading}
+                    className="text-blue-500 hover:underline"
+                    onClick={form.handleSubmit(onSubmit)}
+                  >
                     save
-                  </a>
+                  </button>
                 </span>
               </Form>
             )}
