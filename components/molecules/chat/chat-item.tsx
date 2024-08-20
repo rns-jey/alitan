@@ -13,9 +13,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "../form";
 import { Input } from "@/components/atoms/input";
-import { Button } from "@/components/atoms/button";
 import axios from "axios";
 import { useModal } from "@/hooks/use-modal-store";
+import { useParams, useRouter } from "next/navigation";
 
 interface ChatItemProps {
   id: string;
@@ -56,6 +56,17 @@ export default function ChatItem({
 }: ChatItemProps) {
   const [isEditing, setEditing] = useState(false);
   const { onOpen } = useModal();
+
+  const params = useParams();
+  const router = useRouter();
+
+  const onMemberClick = () => {
+    if (member.id === currentMember.id) {
+      return;
+    }
+
+    router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -113,96 +124,98 @@ export default function ChatItem({
 
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
-      <div className="group flex-1 gap-x-2 items-start w-full">
-        <div className="cursor-pointer hover:drop-shadow-md transition">
+      <div className="group flex gap-x-2 items-start w-full">
+        <div onClick={onMemberClick} className="cursor-pointer hover:drop-shadow-md transition">
           <UserAvatar src={member.profile.imageUrl} />
-          <div className="flex flex-col w-full">
-            <div className="flex items-center gap-x-2">
-              <div className="flex items-center">
-                <p className="font-semibold text-sm hover:underline cursor-pointer">{member.profile.name}</p>
-                <ActionTooltip label={member.role}>{roleIconMap[member.role]}</ActionTooltip>
-              </div>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">{timestamp}</span>
+        </div>
+        <div className="flex flex-col w-full">
+          <div className="flex items-center gap-x-2">
+            <div className="flex items-center">
+              <p onClick={onMemberClick} className="font-semibold text-sm hover:underline cursor-pointer">
+                {member.profile.name}
+              </p>
+              <ActionTooltip label={member.role}>{roleIconMap[member.role]}</ActionTooltip>
             </div>
-            {isImage && (
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">{timestamp}</span>
+          </div>
+          {isImage && (
+            <a
+              href={fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative aspect-square rounded-md mt-2 overflow-hidden border flex items-center bg-secondary h-48 w-48"
+            >
+              <Image src={fileUrl} alt={content} fill className="object-cover" />
+            </a>
+          )}
+          {isPDF && (
+            <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
+              <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
               <a
                 href={fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative aspect-square rounded-md mt-2 overflow-hidden border flex items-center bg-secondary h-48 w-48"
+                className="ml-2 text-sm text-indigo-500 dark:text-indigo-400 hover:underline"
               >
-                <Image src={fileUrl} alt={content} fill className="object-cover" />
+                PDF File
               </a>
-            )}
-            {isPDF && (
-              <div className="relative flex items-center p-2 mt-2 rounded-md bg-background/10">
-                <FileIcon className="h-10 w-10 fill-indigo-200 stroke-indigo-400" />
-                <a
-                  href={fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-sm text-indigo-500 dark:text-indigo-400 hover:underline"
+            </div>
+          )}
+          {!fileUrl && !isEditing && (
+            <p
+              className={cn(
+                "text-sm text-zinc-600 dark:text-zinc-300",
+                deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
+              )}
+            >
+              {content}
+              {isUpdated && !deleted && (
+                <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">(edited)</span>
+              )}
+            </p>
+          )}
+          {!fileUrl && isEditing && (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center w-full gap-x-2 pt-2">
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <div className="relative w-full">
+                          <Input
+                            disabled={isLoading}
+                            className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
+                            placeholder="Edited message"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </form>
+              <span className="text-[11px] mt-1 text-zinc-400">
+                Press escape to{" "}
+                <button
+                  disabled={isLoading}
+                  className="text-blue-500 hover:underline"
+                  onClick={() => setEditing(false)}
                 >
-                  PDF File
-                </a>
-              </div>
-            )}
-            {!fileUrl && !isEditing && (
-              <p
-                className={cn(
-                  "text-sm text-zinc-600 dark:text-zinc-300",
-                  deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
-                )}
-              >
-                {content}
-                {isUpdated && !deleted && (
-                  <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">(edited)</span>
-                )}
-              </p>
-            )}
-            {!fileUrl && isEditing && (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center w-full gap-x-2 pt-2">
-                  <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <div className="relative w-full">
-                            <Input
-                              disabled={isLoading}
-                              className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
-                              placeholder="Edited message"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </form>
-                <span className="text-[11px] mt-1 text-zinc-400">
-                  Press escape to{" "}
-                  <button
-                    disabled={isLoading}
-                    className="text-blue-500 hover:underline"
-                    onClick={() => setEditing(false)}
-                  >
-                    cancel
-                  </button>
-                  , enter to{" "}
-                  <button
-                    disabled={isLoading}
-                    className="text-blue-500 hover:underline"
-                    onClick={form.handleSubmit(onSubmit)}
-                  >
-                    save
-                  </button>
-                </span>
-              </Form>
-            )}
-          </div>
+                  cancel
+                </button>
+                , enter to{" "}
+                <button
+                  disabled={isLoading}
+                  className="text-blue-500 hover:underline"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  save
+                </button>
+              </span>
+            </Form>
+          )}
         </div>
       </div>
       {canDeleteMessage && (
