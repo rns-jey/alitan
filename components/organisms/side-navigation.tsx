@@ -23,7 +23,7 @@ export default async function SideNavigation() {
       },
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
   });
 
