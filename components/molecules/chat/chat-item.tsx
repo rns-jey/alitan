@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem } from "../form";
 import { Input } from "@/components/atoms/input";
 import { Button } from "@/components/atoms/button";
 import axios from "axios";
+import { useModal } from "@/hooks/use-modal-store";
 
 interface ChatItemProps {
   id: string;
@@ -54,7 +55,7 @@ export default function ChatItem({
   isUpdated,
 }: ChatItemProps) {
   const [isEditing, setEditing] = useState(false);
-  const [isDeleting, setDeleting] = useState(false);
+  const { onOpen } = useModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -215,7 +216,15 @@ export default function ChatItem({
             </ActionTooltip>
           )}
           <ActionTooltip label="Delete">
-            <Trash className="cursor-pointer ml-auto h-4 w-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition" />
+            <Trash
+              onClick={() =>
+                onOpen("deleteMessage", {
+                  apiUrl: `${socketUrl}/${id}`,
+                  query: socketQuery,
+                })
+              }
+              className="cursor-pointer ml-auto h-4 w-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition"
+            />
           </ActionTooltip>
         </div>
       )}
