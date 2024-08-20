@@ -3,9 +3,18 @@
 import { Member, MemberRole, Profile } from "@prisma/client";
 import UserAvatar from "../user-avatar";
 import ActionTooltip from "../action-tooltip";
-import { FileIcon, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import qs from "query-string";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "../form";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
+import axios from "axios";
 
 interface ChatItemProps {
   id: string;
@@ -28,6 +37,10 @@ const roleIconMap = {
   ADMIN: <ShieldAlert className="h-4 w-4 ml-2 text-rose-500" />,
 };
 
+const formSchema = z.object({
+  content: z.string().min(1),
+});
+
 export default function ChatItem({
   id,
   content,
@@ -38,9 +51,51 @@ export default function ChatItem({
   deleted,
   socketUrl,
   socketQuery,
+  isUpdated,
 }: ChatItemProps) {
   const [isEditing, setEditing] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      content: content,
+    },
+  });
+
+  useEffect(() => {
+    const handlekeyDown = (event: any) => {
+      if (event.key === "Escape" || event.keyCode === 27) {
+        setEditing(false);
+      }
+    };
+
+    window.addEventListener("keydown", handlekeyDown);
+    return () => {
+      window.removeEventListener("keydown", handlekeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    form.reset({
+      content: content,
+    });
+  }, [content]);
+
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const url = qs.stringifyUrl({
+        url: `${socketUrl}/${id}`,
+        query: socketQuery,
+      });
+
+      await axios.patch(url, values);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fileType = fileUrl?.split(".").pop();
 
@@ -54,7 +109,7 @@ export default function ChatItem({
 
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
-      <div className="group flex gap-x-2 items-start w-full">
+      <div className="group flex-1 gap-x-2 items-start w-full">
         <div className="cursor-pointer hover:drop-shadow-md transition">
           <UserAvatar src={member.profile.imageUrl} />
           <div className="flex flex-col w-full">
@@ -88,10 +143,71 @@ export default function ChatItem({
                 </a>
               </div>
             )}
-            {!fileUrl && <p>{content}</p>}
+            {!fileUrl && !isEditing && (
+              <p
+                className={cn(
+                  "text-sm text-zinc-600 dark:text-zinc-300",
+                  deleted && "italic text-zinc-500 dark:text-zinc-400 text-xs mt-1"
+                )}
+              >
+                {content}
+                {isUpdated && !deleted && (
+                  <span className="text-[10px] mx-2 text-zinc-500 dark:text-zinc-400">(edited)</span>
+                )}
+              </p>
+            )}
+            {!fileUrl && isEditing && (
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center w-full gap-x-2 pt-2">
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <div className="relative w-full">
+                            <Input
+                              disabled={isLoading}
+                              className="p-2 bg-zinc-200/90 dark:bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-600 dark:text-zinc-200"
+                              placeholder="Edited message"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+                <span className="text-[11px] mt-1 text-zinc-400">
+                  Press escape to{" "}
+                  <a className="text-blue-500 hover:underline" onClick={() => setEditing(false)}>
+                    cancel
+                  </a>
+                  , enter to{" "}
+                  <a className="text-blue-500 hover:underline" onClick={() => setEditing(false)}>
+                    save
+                  </a>
+                </span>
+              </Form>
+            )}
           </div>
         </div>
       </div>
+      {canDeleteMessage && (
+        <div className="hidden group-hover:flex items-center gap-x-2 absolute p-1 -top-2 right-5 bg-white dark:bg-zinc-800 border rounded-sm">
+          {canEditMessage && (
+            <ActionTooltip label="Edit">
+              <Edit
+                onClick={() => setEditing(true)}
+                className="cursor-pointer ml-auto h-4 w-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition"
+              />
+            </ActionTooltip>
+          )}
+          <ActionTooltip label="Delete">
+            <Trash className="cursor-pointer ml-auto h-4 w-4 text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition" />
+          </ActionTooltip>
+        </div>
+      )}
     </div>
   );
 }
