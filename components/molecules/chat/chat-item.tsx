@@ -92,6 +92,9 @@ export default function ChatItem({
       });
 
       await axios.patch(url, values);
+
+      form.reset();
+      setEditing(false);
     } catch (error) {
       console.error(error);
     }
@@ -184,7 +187,7 @@ export default function ChatItem({
                     cancel
                   </a>
                   , enter to{" "}
-                  <a className="text-blue-500 hover:underline" onClick={() => setEditing(false)}>
+                  <a className="text-blue-500 hover:underline" onClick={form.handleSubmit(onSubmit)}>
                     save
                   </a>
                 </span>
